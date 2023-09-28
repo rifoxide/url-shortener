@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
+
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+
+<body class="container valign-wrapper">
+  <div class="row">
+    <div class="card">
+      <div class="card-tabs">
+        <ul class="tabs tabs-fixed-width">
+          <li class="tab generate">
+            <a class="active" href="#generate">Generate</a>
+          </li>
+          <li class="tab"><a href="#delete">Delete</a></li>
+        </ul>
+      </div>
+      <div class="card-content">
+        <div id="generate">
+          <form id="submit_url">
+            <span class="card-title center">Make your loooong link short!</span>
+            <div class="card-content left-align">
+              <div class="input-field">
+                <input name="main_url" id="main_url" type="url" required aria-required="true" class="validate" />
+                <label for="main_url">your long link</label>
+                <span class="main_url" data-error="wrong" data-success="right"></span>
+              </div>
+
+              <div class="input-field">
+                <input name="url_suffix" id="url_suffix" type="text" minlength="5" maxlength="25" pattern="^[A-Za-z]+$"
+                  class="validate" oninvalid="form_handle_error(this)" />
+                <label for="url_suffix">custom link (optional)</label>
+              </div>
+            </div>
+
+            <div class="card-action right-align">
+              <button id="submit_btn" class="btn btn-small waves-effect right-align blue" type="submit">
+                shorten URL<i class="material-icons right">link</i>
+              </button>
+
+              <button id="clear_btn" class="btn btn-small waves-effect right-align red" type="button"
+                onclick="clear_submit_form(submit_url)" style="display: none">
+                reset<i class="material-icons right">delete_forever</i>
+              </button>
+            </div>
+
+            <ul id="generated_url_collapsible" class="collapsible" style="display: none">
+              <li>
+                <div class="collapsible-header">
+                  <i class="material-icons">ICON</i>STATUS_TITLE
+                </div>
+                <div class="collapsible-body">
+                  <input id="generated_url" readonly onclick="copy_to_clipboard(this)" />
+                  <label>your shortened link.</label>
+
+                  <input id="generated_secret_key" readonly onclick="copy_to_clipboard(this)" />
+                  <label>save the secret key to delete your short link
+                    later.</label>
+                </div>
+              </li>
+            </ul>
+          </form>
+        </div>
+        <div id="delete">
+          <form id="delete_url">
+            <span class="card-title center">Delete your short link</span>
+            <div class="card-content left-align">
+              <div class="input-field">
+                <input id="delete_url" name="url_suffix" type="url" class="validate" required aria-required="true" />
+                <label for="delete_url">short link</label>
+              </div>
+
+              <div class="input-field">
+                <input id="secret_key" name="secret_key" pattern="^[a-z0-9_]+$" type="text" class="validate" required
+                  minlength="25" maxlength="25" aria-required="true" oninvalid="form_handle_error(this,true)" />
+                <label for="secret_key">secret key</label>
+              </div>
+            </div>
+
+            <div class="card-action right-align">
+              <button id="delete_btn" class="btn btn-small waves-effect right-align red" type="submit">
+                Delete<i class="material-icons right">delete_forever</i>
+              </button>
+            </div>
+
+            <ul id="deleted_url_collapsible" class="collapsible" style="display: none">
+              <li>
+                <div class="collapsible-header">
+                  <i class="material-icons">ICON</i>STATUS_TITLE
+                </div>
+                <div class="collapsible-body">
+                  <span></span>
+                </div>
+              </li>
+            </ul>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="application/javascript" src="static/js/form_callback.js"></script>
+  <script type="application/javascript" src="static/js/utils.js"></script>
+  <script type="application/javascript" src="static/js/status_msgs.js"></script>
+  <script type="application/javascript">
+    function form_handle_error(t, nums = false) {
+      if (t.validity.patternMismatch) {
+        if (nums) {
+          t.setCustomValidity('Only alphabets and numbers are allowed.')
+        } else {
+          t.setCustomValidity('Only alphabets are allowed.')
+        }
+      } else {
+        t.setCustomValidity('')
+      }
+    }
+
+    function add_form_event(form_selector) {
+      const form_elem = document.querySelector(form_selector)
+      form_elem.addEventListener('submit', async event => {
+        event.preventDefault()
+
+        let data = { form_id: form_elem.id }
+        for (const input of document
+          .querySelector(form_selector)
+          .querySelectorAll('input')) {
+          data[input.name] = input.value
+        }
+        await form_callback(data)
+      })
+    }
+
+    function m_tab_init() {
+      function m_tab_callback() {
+        const elem = M.Tabs.getInstance(document.querySelector('.tabs'))
+        if (elem.index == 0) {
+          document.querySelector('.tabs .indicator').style.backgroundColor =
+            '#2598f3'
+        } else {
+          document.querySelector('.tabs .indicator').style.backgroundColor =
+            ''
+        }
+      }
+      const tabs_options = {
+        duration: 300,
+        onShow: m_tab_callback,
+        swipeable: false,
+        responsiveThreshold: Infinity
+      }
+
+      M.Tabs.init(document.querySelector('.tabs'), tabs_options)
+      m_tab_callback()
+    }
+
+    function m_collapsible_init() {
+      function m_collapsible_callback(elem) {
+        if (document.getElementById('submit_btn').style.display == '') {
+          elem.parentNode.style.display = "none"
+        };
+      }
+
+      const collapsible_options = {
+        duration: 300,
+        onCloseEnd: m_collapsible_callback
+      }
+
+      M.Collapsible.init(document.querySelectorAll('.collapsible'))
+    }
+
+    window.addEventListener('DOMContentLoaded', event => {
+      m_tab_init()
+      m_collapsible_init()
+    })
+
+    add_form_event('form#submit_url')
+    add_form_event('form#delete_url')
+  </script>
+</body>
+
+</html>
