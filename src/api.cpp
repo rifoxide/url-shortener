@@ -25,6 +25,12 @@ class API {
       return page.render();
     });
 
+    CROW_ROUTE(app, "/404")
+    ([]() {
+      auto page = crow::mustache::load("404.html");
+      return page.render();
+    });
+
     // https://stackoverflow.com/a/26903867
     CROW_ROUTE(app, "/api/add")
         .methods(crow::HTTPMethod::POST)([&](const crow::request& req) {
@@ -93,28 +99,33 @@ class API {
           }
           */
 
-          return crow::response{404, genJson(&url, "URL_DEL_SUCCESS")};
+          return crow::response{200, genJson(&url, "URL_DEL_SUCCESS")};
         });
 
     CROW_ROUTE(app, "/<string>")
-        .methods(crow::HTTPMethod::GET)([](std::string url_suffix) {
-          if (url_suffix.size() != URL_SUFFIX_SIZE)
-            return crow::response(404, "INVALID_SHORT_URL");
+        .methods(crow::HTTPMethod::GET)(
+            [](crow::response& res, std::string url_suffix) {
+              if (url_suffix.size() != URL_SUFFIX_SIZE) {
+                res.code = 404;
+                res.write("INVALID_SHORT_URL");
+                res.end();
+              }
 
-          /*
-          TODO: add db support.
+              /*
+              TODO: add db support.
 
-          URLData result = db.get(url_suffix);
+              URLData result = db.get(url_suffix);
 
-          if (result.main_url.empty()) {
-            return crow::response(404, "SHORT_URL_REVOKED");
-          } else {
-            return crow::response.redirect{result.main_url};
-          }
-          */
+              if (result.main_url.empty()) {
+                res.redirect("/404");
+              } else {
+                res.redirect(result.main_url);
+              }
+              */
+              res.end();
+              // return crow::response{200};
+            });
 
-          return crow::response{200};
-        });
     app.port(PORT).multithreaded().run_async();
   }
 };

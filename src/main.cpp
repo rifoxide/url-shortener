@@ -1,4 +1,4 @@
-#include "src/api.cpp"
+#include "api.cpp"
 
 int main() {
   API api;

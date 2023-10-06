@@ -30,14 +30,18 @@ const status_msgs = {
     icon_color: 'red-text',
     collapsable: false
   },
-
   URL_SUFFIX_EXISTS: {
     title: 'Someone already took that custom url before you!',
     icon: 'info',
     icon_color: 'orange-text',
     collapsable: false
   },
-
+  INVALID_SHORT_URL: {
+    title: 'Your short url was invalid.',
+    icon: 'info',
+    icon_color: 'orange-text',
+    collapsable: false
+  },
   UNKNOWN_ERROR: {
     title: 'Something went wrong.',
     icon: 'sentiment_very_dissatisfied',
