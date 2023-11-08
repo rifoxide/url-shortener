@@ -18,7 +18,7 @@ int insert_url(URLData url) {
   file << url.suffix << "," << url.main << "\n";
   file.close();
 
-  return URL_INSERTED_SUCCESSFULLY;
+  return URL_GEN_SUCCESS;
 }
 
 /*
@@ -63,5 +63,5 @@ int delete_url(URLData url) {
   std::remove(main_file_name);
   std::rename(temp_file_name, main_file_name);
 
-  return (is_deleted) ? URL_DELETED_SUCCESSFULLY : URL_DELETION_FAILED;
+  return (is_deleted) ? URL_DEL_SUCCESS : URL_DEL_FAILED;
 }

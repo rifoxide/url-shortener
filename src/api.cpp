@@ -1,8 +1,11 @@
 #include "crow.h"
+#include "db.cpp"
 #include "utils/fileUtils.cpp"
 #include "utils/linkUtils.cpp"
 
 class API {
+  Database db;
+
  public:
   std::string genJson(URLData* url, const char status_msg[]) {
     if (url == nullptr) {
@@ -45,23 +48,19 @@ class API {
           url.suffix = data["url_suffix"].s();
           url.secret_key = genShortUrlId(SECRET_KEY_SIZE);
 
-          /*
-          TODO: add db support
-
           if (url.suffix.empty()) {
             url.suffix = genShortUrlId();
           } else {
             if (db.check(url)) {
-              return crow::response(404, genJson(nullptr, "URL_SUFFIX_EXISTS"));
+              return crow::response(404, genJson(&url, "URL_SUFFIX_EXISTS"));
             }
           }
 
           if (db.add(url)) {
-            return crow::response(200, genJson(nullptr, "URL_GEN_SUCCESS"));
+            return crow::response(200, genJson(&url, "URL_GEN_SUCCESS"));
           } else {
-            return crow::response(404, genJson(nullptr, "URL_GEN_FAILED"));
+            return crow::response(404, genJson(&url, "URL_GEN_FAILED"));
           }
-          */
 
           return crow::response{200, genJson(&url, "URL_GEN_SUCCESS")};
         });
@@ -83,45 +82,41 @@ class API {
           url.suffix = data["url_suffix"].s();
           url.secret_key = data["secret_key"].s();
 
-          /*
-          TODO: add db support
-
           URLData result = db.get(url);
 
           if (result.secret_key != url.secret_key) {
             return crow::response(404, genJson(nullptr, "WRONG_SECRET_KEY"));
           } else {
-            if (db.delete(result)) {
+            if (db.del(result)) {
               return crow::response(200, genJson(nullptr, "URL_DEL_SUCCESS"));
             } else {
               return crow::response(404, genJson(nullptr, "URL_DEL_FAILED"));
             }
           }
-          */
 
           return crow::response{200, genJson(&url, "URL_DEL_SUCCESS")};
         });
 
     CROW_ROUTE(app, "/<string>")
         .methods(crow::HTTPMethod::GET)(
-            [](crow::response& res, std::string url_suffix) {
+            [&](crow::response& res, std::string url_suffix) {
               if (url_suffix.size() != URL_SUFFIX_SIZE) {
                 res.code = 404;
                 res.write("INVALID_SHORT_URL");
                 res.end();
               }
 
-              /*
-              TODO: add db support.
+              URLData url;
+              url.suffix = url_suffix;
 
-              URLData result = db.get(url_suffix);
+              URLData result = db.get(url);
 
-              if (result.main_url.empty()) {
+              if (result.main.empty()) {
                 res.redirect("/404");
               } else {
-                res.redirect(result.main_url);
+                res.redirect(result.main);
               }
-              */
+
               res.end();
               // return crow::response{200};
             });
