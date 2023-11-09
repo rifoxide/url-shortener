@@ -1,0 +1,10 @@
+[
+  {
+    "directory": "/home/rifat/projects/c_cpp/url-shortener/",
+    "arguments": [
+      "clang",
+      "-Iinclude"
+    ],
+    "file": "src/main.cpp"
+  }
+]

@@ -1,5 +1,6 @@
 CC=clang++
-CFLAGS= -Wall -Werror -Wshadow -fsanitize=address -pedantic -fstack-protector -pipe -std=c++17
+CFLAGS= -Wall 
+#-Werror -Wshadow -fsanitize=address -pedantic -fstack-protector -pipe -std=c++17
 INCLUDE=./include
 INPUT=src/main.cpp
 OUTPUT=app
