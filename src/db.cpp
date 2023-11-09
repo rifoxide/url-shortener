@@ -1,11 +1,12 @@
 #include <iostream>
-#include <map>
+// #include <map>
 
+#include <btree_map.h>
 #include "common.hpp"
 #include "status_codes.h"
 
 class Database {
-  std::map<std::string, URLData> data;
+  btree::btree_map<std::string, URLData> data;
 
  public:
   Database() { std::cout << "loading data\n"; }
