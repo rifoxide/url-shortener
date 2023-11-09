@@ -74,7 +74,8 @@ class API {
             return crow::response(404, genJson(nullptr, "NO_DATA_RECIEVED"));
           } else if (data["secret_key"].size() != SECRET_KEY_SIZE) {
             return crow::response(404, genJson(nullptr, "WRONG_SECRET_KEY"));
-          } else if (data["url_suffix"].size() != URL_SUFFIX_SIZE) {
+          } else if (!(data["url_suffix"].size() >= URL_SUFFIX_SIZE_MIN &&
+                       data["url_suffix"].size() <= URL_SUFFIX_SIZE_MAX)) {
             return crow::response(404, genJson(nullptr, "INVALID_SHORT_URL"));
           }
 
@@ -100,7 +101,8 @@ class API {
     CROW_ROUTE(app, "/<string>")
         .methods(crow::HTTPMethod::GET)(
             [&](crow::response& res, std::string url_suffix) {
-              if (url_suffix.size() != URL_SUFFIX_SIZE) {
+              if (!(url_suffix.size() >= URL_SUFFIX_SIZE_MIN &&
+                    url_suffix.size() <= URL_SUFFIX_SIZE_MAX)) {
                 res.code = 404;
                 res.write("INVALID_SHORT_URL");
                 res.end();

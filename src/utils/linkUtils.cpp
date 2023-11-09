@@ -17,7 +17,7 @@ inline std::string shiftTextByN(std::string text) {
   return text;
 }
 
-std::string genShortUrlId(int url_size = URL_SUFFIX_SIZE) {
+std::string genShortUrlId(int url_size = URL_SUFFIX_SIZE_MIN) {
   srand(time(NULL));
   std::string char_set = "0123456789abcdefghijkmnopqrstuvwxyz";
   std::string short_url_id = "";
