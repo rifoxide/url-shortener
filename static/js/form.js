@@ -89,7 +89,7 @@ async function submit_form_callback (data) {
 
   if (res.ok) {
     toggle_submit_btn()
-    document.getElementById('generated_url').value = json.main_url
+    document.getElementById('generated_url').value = `${window.location.origin}/${json.url_suffix}`
     document.getElementById('generated_secret_key').value = json.secret_key
 
     elem.style.display = ''

@@ -3,7 +3,6 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-const std::string DOMAIN = "bati.io";
 const int PORT = 9600;
 const int URL_SUFFIX_SIZE_MIN = 4;
 const int URL_SUFFIX_SIZE_MAX = 30;

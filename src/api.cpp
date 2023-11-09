@@ -11,8 +11,7 @@ class API {
     if (url == nullptr) {
       return crow::json::wvalue({{"status_msg", status_msg}}).dump();
     } else {
-      return crow::json::wvalue({{"main_url", (DOMAIN + '/' + url->suffix)},
-                                 {"url_suffix", url->suffix},
+      return crow::json::wvalue({{"url_suffix", url->suffix},
                                  {"secret_key", url->secret_key},
                                  {"status_msg", status_msg}})
           .dump();
