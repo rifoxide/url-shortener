@@ -116,7 +116,7 @@ async function delete_form_callback (data) {
   if (res.ok) {
     elem.style.display = ''
 
-    document.querySelector('input#delete_url').disabled = true
+    document.querySelector('input#short_url').disabled = true
     document.querySelector('input#secret_key').disabled = true
     document.querySelector('button#delete_btn').disabled = true
 
